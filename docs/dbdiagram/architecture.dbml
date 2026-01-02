@@ -1,0 +1,83 @@
+Table users {
+  id uuid [pk]
+  username text [unique, not null]
+  password_hash text [not null]
+  is_active boolean [not null, default: true]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table roles {
+  id smallint [pk]
+  name text [unique, not null]
+  description text
+}
+
+Table user_roles {
+  user_id uuid [not null]
+  role_id smallint [not null]
+
+  Indexes {
+    (user_id, role_id) [unique]
+  }
+}
+
+Table sessions {
+  id uuid [pk]
+  user_id uuid [not null]
+  login_at timestamp [not null]
+  logout_at timestamp
+  ip_address inet
+  user_agent text
+}
+
+Table audit_log {
+  id bigserial [pk]
+  user_id uuid
+  action text [not null]
+  entity text [not null]
+  entity_id uuid
+  old_data jsonb
+  new_data jsonb
+  created_at timestamp [not null]
+}
+
+Table members {
+  id uuid [pk]
+  full_name text [not null]
+  email text
+  joined_at date
+  metadata jsonb
+}
+
+Table projects {
+  id uuid [pk]
+  name text [not null]
+  description text
+  status text
+  metadata jsonb
+  created_at timestamp [not null]
+}
+
+Table contribution_types {
+  id smallint [pk]
+  name text [unique, not null]
+}
+
+Table contributions {
+  id uuid [pk]
+  member_id uuid [not null]
+  project_id uuid [not null]
+  type_id smallint [not null]
+  amount numeric
+  description text
+  metadata jsonb
+  created_at timestamp [not null]
+}
+
+Ref: user_roles.user_id > users.id
+Ref: user_roles.role_id > roles.id
+Ref: sessions.user_id > users.id
+Ref: contributions.member_id > members.id
+Ref: contributions.project_id > projects.id
+Ref: contributions.type_id > contribution_types.id
