@@ -4,6 +4,7 @@
 .env
 .env.*
 !.env.example
+venv
 
 # =====================
 # Docker
@@ -39,3 +40,10 @@ Thumbs.db
 tmp/
 temp/
 .cache/
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+
