@@ -1,10 +1,23 @@
-Table users {
+Table persons {
   id uuid [pk]
+  full_name text [not null]
+  email text [unique]
+  created_at timestamp [not null]
+}
+
+Table users {
+  person_id uuid [pk, not null]
   username text [unique, not null]
   password_hash text [not null]
   is_active boolean [not null, default: true]
   created_at timestamp [not null]
   updated_at timestamp [not null]
+}
+
+Table members {
+  person_id uuid [pk, not null]
+  joined_at date
+  metadata jsonb
 }
 
 Table roles {
@@ -42,14 +55,6 @@ Table audit_log {
   created_at timestamp [not null]
 }
 
-Table members {
-  id uuid [pk]
-  full_name text [not null]
-  email text
-  joined_at date
-  metadata jsonb
-}
-
 Table projects {
   id uuid [pk]
   name text [not null]
@@ -75,9 +80,23 @@ Table contributions {
   created_at timestamp [not null]
 }
 
-Ref: user_roles.user_id > users.id
+/* Inheritance / specialization */
+/* FK users.person_id → persons.id */
+/* Garantiza que todo usuario del sistema corresponde */
+/* a una persona existente. */
+Ref: users.person_id > persons.id 
+
+/* FK contributions.member_id → members.person_id*/
+/* Solo las personas que son miembros pueden realizar aportaciones.*/
+Ref: members.person_id > persons.id
+
+/* Security */
+Ref: user_roles.user_id > users.person_id
 Ref: user_roles.role_id > roles.id
-Ref: sessions.user_id > users.id
-Ref: contributions.member_id > members.id
+Ref: sessions.user_id > users.person_id
+Ref: audit_log.user_id > users.person_id
+
+/* Business */
+Ref: contributions.member_id > members.person_id
 Ref: contributions.project_id > projects.id
 Ref: contributions.type_id > contribution_types.id
