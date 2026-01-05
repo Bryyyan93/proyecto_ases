@@ -1,11 +1,14 @@
+-- Habria q meter is_active para member tambien?
+-- MEMBERS (subtype)
+-- Especialización económica de persons.
+-- Representa la relación financiera de una persona con la asociación.
 CREATE TABLE members (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    full_name TEXT NOT NULL,
-    email TEXT,
+    person_id UUID PRIMARY KEY REFERENCES persons(id) ON DELETE CASCADE,
     joined_at DATE,
     metadata JSONB
 );
 
+-- PROJECTS
 CREATE TABLE projects (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL,
@@ -15,14 +18,16 @@ CREATE TABLE projects (
     created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
+-- CONTRIBUTION TYPES
 CREATE TABLE contribution_types (
     id SMALLINT PRIMARY KEY,
     name TEXT NOT NULL UNIQUE
 );
 
+-- CONTRIBUTIONS
 CREATE TABLE contributions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    member_id UUID NOT NULL REFERENCES members(id),
+    member_id UUID NOT NULL REFERENCES members(person_id) ON DELETE RESTRICT,
     project_id UUID NOT NULL REFERENCES projects(id),
     type_id SMALLINT NOT NULL REFERENCES contribution_types(id),
     amount NUMERIC,

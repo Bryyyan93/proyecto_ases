@@ -1,4 +1,17 @@
--- 2. Triggers (DESPUÉS de existir tablas y función)
+-- Triggers (DESPUÉS de existir tablas y función)
+-- Trigger AFTER INSERT/UPDATE/DELETE
+-- Llama a la función de auditoría para capturar
+-- el estado previo y posterior de la fila.
+-- PERSONS
+CREATE TRIGGER trg_audit_persons
+AFTER INSERT OR UPDATE OR DELETE ON persons
+FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- USERS
+CREATE TRIGGER trg_audit_users
+AFTER INSERT OR UPDATE OR DELETE ON users
+FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
 -- MEMBERS
 CREATE TRIGGER trg_audit_members
 AFTER INSERT OR UPDATE OR DELETE ON members
