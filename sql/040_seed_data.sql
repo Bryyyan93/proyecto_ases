@@ -6,6 +6,7 @@ INSERT INTO roles (id, name, description) VALUES
 (5, 'tesoreria', 'Gestión económica');
 
 INSERT INTO contribution_types (id, name) VALUES
-(1, 'money'),
-(2, 'material'),
-(3, 'service');
+(1, 'monthly_fee'),
+(2, 'money'),
+(3, 'material'),
+(4, 'service');

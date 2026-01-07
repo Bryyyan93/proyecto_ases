@@ -5,6 +5,7 @@
 CREATE TABLE members (
     person_id UUID PRIMARY KEY REFERENCES persons(id) ON DELETE CASCADE,
     joined_at DATE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     metadata JSONB
 );
 
