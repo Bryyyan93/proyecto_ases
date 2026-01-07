@@ -15,31 +15,43 @@ def members_ui():
                 ui.card(
                     ui.input_action_button(
                         "btn_new_member",
-                        "Crear un nuevo usuario"
+                        "Nuevo usuario"
                     )
                 ),
                 ui.card(
-
+                    # Futuro boton supongo
                 ),
-                col_widths=[4, 4]
+                col_widths=[3, 3]
             )
         ),
 
-        ui.br(),
+        ui.hr(),
 
         # Tabla principal
         ui.card(
             ui.h4("Listado de miembros"),
-            ui.input_select(
-                "member_status",
-                "Status",
-                {
-                    "all": "Todos",
-                    "active": "Activos",
-                    "inactive": "Inactivos"
-                },
-                selected="all"
-            ),
+            ui.layout_columns(
+                ui.card(
+                    ui.input_select(
+                        "member_status",
+                        "Status",
+                        {
+                            "all": "Todos",
+                            "active": "Activos",
+                            "inactive": "Inactivos"
+                        },
+                        selected="all"
+                    )
+                ),
+                ui.card(    
+                    ui.input_text(
+                        "member_search",
+                        "Buscar miembro...",
+                        placeholder="nombre/email"
+                    )
+                ),
+                width = 1 / 2,
+            ),    
             ui.output_data_frame("members_table"),
             full_screen=True
         )
@@ -127,11 +139,13 @@ def members_server(input, output, session):
     @render.data_frame
     def members_table():
         members_refresh.get()  # ← dependencia reactiva
+        
         data = MemberService.list_members(
             db,
-            status=input.member_status()
+            status=input.member_status(),
+            keyword=input.member_search() 
         )
-        
+
         df = pd.DataFrame(data)
         print(df)
         if df.empty:

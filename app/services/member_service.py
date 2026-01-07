@@ -67,7 +67,7 @@ class MemberService:
             raise
 
     @staticmethod
-    def list_members(db, status="all"):
+    def list_members(db, status="all", keyword=None):
         query = """
         SELECT
             p.full_name,
@@ -84,6 +84,22 @@ class MemberService:
         LEFT JOIN roles r ON r.id = ur.role_id
         LEFT JOIN members m ON m.person_id = p.id
         LEFT JOIN contributions c ON c.member_id = m.person_id
+        """
+
+        conditions = []
+        params = {}
+
+        # 🔍 Buscador
+        if keyword:
+            conditions.append(
+                "(p.full_name ILIKE :kw OR p.email ILIKE :kw)"
+            )
+            params["kw"] = f"%{keyword}%"
+
+        if conditions:
+            query += " WHERE " + " AND ".join(conditions)
+
+        query += """
         GROUP BY
             p.id, p.full_name, p.email,
             u.person_id, u.is_active,
@@ -97,5 +113,5 @@ class MemberService:
 
         query += " ORDER BY p.full_name"
 
-        return db.execute(text(query)).mappings().all()
+        return db.execute(text(query), params).mappings().all()
 
