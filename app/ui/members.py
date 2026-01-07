@@ -26,11 +26,10 @@ def members_ui():
         ),
 
         ui.hr(),
-
         # Tabla principal
         ui.card(
             ui.h4("Listado de miembros"),
-            ui.layout_columns(
+            ui.layout_column_wrap(
                 ui.card(
                     ui.input_select(
                         "member_status",
@@ -49,12 +48,13 @@ def members_ui():
                         "Buscar miembro...",
                         placeholder="nombre/email"
                     )
-                ),
-                width = 1 / 2,
-            ),    
+                ), 
+            ),   
+        ),
+        ui.card(
             ui.output_data_frame("members_table"),
             full_screen=True
-        )
+        )    
     )
 
 
