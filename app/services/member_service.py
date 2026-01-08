@@ -73,9 +73,9 @@ class MemberService:
             p.full_name,
             p.email,
             (u.person_id IS NOT NULL) AS is_user,
-            u.is_active AS user_active,
+            p.is_active AS user_active,
             (m.person_id IS NOT NULL) AS is_member,
-            m.is_active AS member_active,
+            p.is_active AS member_active,
             BOOL_OR(r.name = 'admin') AS is_admin,
             COALESCE(SUM(c.amount), 0) AS total_contributed
         FROM persons p
@@ -102,14 +102,14 @@ class MemberService:
         query += """
         GROUP BY
             p.id, p.full_name, p.email,
-            u.person_id, u.is_active,
-            m.person_id, m.is_active
+            u.person_id, p.is_active,
+            m.person_id, p.is_active
         """
 
         if status == "active":
-            query += " HAVING m.person_id IS NOT NULL AND m.is_active = true"
+            query += " HAVING m.person_id IS NOT NULL AND p.is_active = true"
         elif status == "inactive":
-            query += " HAVING m.person_id IS NOT NULL AND m.is_active = false"
+            query += " HAVING m.person_id IS NOT NULL AND p.is_active = false"
 
         query += " ORDER BY p.full_name"
 

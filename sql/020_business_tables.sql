@@ -1,11 +1,9 @@
--- Habria q meter is_active para member tambien?
 -- MEMBERS (subtype)
 -- Especialización económica de persons.
 -- Representa la relación financiera de una persona con la asociación.
 CREATE TABLE members (
     person_id UUID PRIMARY KEY REFERENCES persons(id) ON DELETE CASCADE,
     joined_at DATE,
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     metadata JSONB
 );
 

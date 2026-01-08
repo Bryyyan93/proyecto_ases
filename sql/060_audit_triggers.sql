@@ -26,3 +26,11 @@ FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 CREATE TRIGGER trg_audit_contributions
 AFTER INSERT OR UPDATE OR DELETE ON contributions
 FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- Trigger de auditoría automática para activities.
+-- Garantiza trazabilidad completa del ciclo de vida de las tareas.
+CREATE TRIGGER trg_audit_activities
+AFTER INSERT OR UPDATE OR DELETE
+ON activities
+FOR EACH ROW
+EXECUTE FUNCTION audit_activities();

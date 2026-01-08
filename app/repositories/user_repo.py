@@ -9,17 +9,18 @@ class UserRepository(BaseRepository):
         # Esto te permite multi-rol en el futuro sin tocar el diseño
         query = text("""
             SELECT
-                u.id,
+                u.person_id,
                 u.username,
                 u.password_hash,
-                u.is_active,
+                p.is_active,
                 ARRAY_AGG(r.name) AS roles
             FROM users u
+            JOIN persons p ON p.id = u.person_id
             JOIN user_roles ur ON ur.user_id = u.id
             JOIN roles r ON r.id = ur.role_id
             WHERE u.username = :username
-              AND u.is_active = true
-            GROUP BY u.id, u.username, u.password_hash, u.is_active
+              AND p.is_active = true
+            GROUP BY u.id, u.username, u.password_hash, p.is_active
         """)
 
         return self.db.execute(

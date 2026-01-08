@@ -6,6 +6,7 @@ CREATE TABLE persons (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     full_name TEXT NOT NULL,
     email TEXT UNIQUE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
@@ -18,7 +19,6 @@ CREATE TABLE users (
     person_id UUID PRIMARY KEY REFERENCES persons(id) ON DELETE CASCADE,
     username TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()
 );

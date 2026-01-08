@@ -10,3 +10,10 @@ INSERT INTO contribution_types (id, name) VALUES
 (2, 'money'),
 (3, 'material'),
 (4, 'service');
+
+INSERT INTO activity_statuses (id, name, description, is_final) VALUES
+(1, 'planned', 'Actividad planificada', false),
+(2, 'in_progress', 'Actividad en curso', false),
+(3, 'blocked', 'Actividad bloqueada', false),
+(4, 'done', 'Actividad finalizada', true),
+(5, 'cancelled', 'Actividad cancelada', true);
