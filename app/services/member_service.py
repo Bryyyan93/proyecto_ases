@@ -20,41 +20,54 @@ class MemberService:
 
             db.execute(
                 text("""
-                INSERT INTO persons (id, full_name, email, created_at)
-                VALUES (:id, :full_name, :email, now())
+                INSERT INTO persons (id, full_name, email, is_active, created_at)
+                VALUES (:id, :full_name, :email, :is_active, now())
                 """),
                 {
                     "id": person_id,
                     "full_name": full_name,
-                    "email": email
+                    "email": email,
+                    "is_active": is_active,
                 }
             )
 
             # Crear member
             db.execute(
                 text("""
-                INSERT INTO members (person_id, joined_at, is_active)
-                VALUES (:person_id, current_date, :is_active)
+                INSERT INTO members (person_id, joined_at)
+                VALUES (:person_id, current_date)
                 """),
                 {
-                    "person_id": person_id,
-                    "is_active": is_active
+                    "person_id": person_id
                 }
             )
 
-            # Crear member
+            # Crear user/admin
             db.execute(
                 text("""
-                INSERT INTO users (person_id, username, password_hash, is_active, created_at, updated_at)
-                VALUES (:person_id, :username, :password_hash, :is_active, now(), now())
+                INSERT INTO users (person_id, username, password_hash, created_at, updated_at)
+                VALUES (:person_id, :username, :password_hash, now(), now())
                 """),
                 {
                     "person_id": person_id,
                     "username": email,
-                    "password_hash": '$2b$12$PZqziI5a1hKS.EwMElQhZuet98gPD0u2uEnUxQRKAo4ePXsUpYVzq',
-                    "is_active": is_active,
+                    "password_hash": '$2b$12$PZqziI5a1hKS.EwMElQhZuet98gPD0u2uEnUxQRKAo4ePXsUpYVzq'
                 }
             )
+
+            # Asignar rol admin
+            admin = 1 if is_admin else 2
+
+            db.execute(
+                text("""
+                INSERT INTO user_roles (user_id, role_id)
+                VALUES (:user_id, :role_id)
+                """),
+                {
+                    "user_id": person_id,
+                    "role_id": admin
+                }
+            )     
 
             db.commit()
 
@@ -72,10 +85,8 @@ class MemberService:
         SELECT
             p.full_name,
             p.email,
-            (u.person_id IS NOT NULL) AS is_user,
-            p.is_active AS user_active,
+            p.is_active AS person_active,
             (m.person_id IS NOT NULL) AS is_member,
-            p.is_active AS member_active,
             BOOL_OR(r.name = 'admin') AS is_admin,
             COALESCE(SUM(c.amount), 0) AS total_contributed
         FROM persons p
@@ -103,7 +114,7 @@ class MemberService:
         GROUP BY
             p.id, p.full_name, p.email,
             u.person_id, p.is_active,
-            m.person_id, p.is_active
+            m.person_id
         """
 
         if status == "active":

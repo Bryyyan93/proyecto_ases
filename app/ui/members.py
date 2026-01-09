@@ -153,24 +153,24 @@ def members_server(input, output, session):
 
         # Limpieza visual
         # hay q cambiar el is_active para personas, será mas sencillo al final
-        df["is_user"] = df["is_user"].map({True: "Sí", False: "No"})
+        df["is_admin"] = df["is_admin"].map({True: "Sí", False: "No"})
         df["is_member"] = df["is_member"].map({True: "Sí", False: "No"})
-        df["member_active"] = df["member_active"].map({True: "Sí", False: "No"})
+        df["person_active"] = df["person_active"].map({True: "Sí", False: "No"})
         df["total_contributed"] = df["total_contributed"].astype(float).round(2)
 
         df = df[[
             "full_name",
             "email",
-            "is_user",
+            "is_admin",
             "is_member",
-            "member_active",
+            "person_active",
             "total_contributed"
         ]]
 
         df.columns = [
             "Nombre",
             "Email",
-            "Usuario",
+            "admin",
             "Miembro",
             "Activo",
             "Total aportado (€)"
