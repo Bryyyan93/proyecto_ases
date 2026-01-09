@@ -80,6 +80,56 @@ Table contributions {
   created_at timestamp [not null]
 }
 
+Table activity_statuses {
+  id smallint [pk]
+  name text [unique, not null]
+  description text
+  is_final boolean [not null, default: false]
+}
+
+Table activities {
+  id uuid [pk]
+  project_id uuid [not null]
+  status_id smallint [not null]
+  name text [not null]
+  description text
+  start_date date
+  end_date date
+  created_at timestamp [not null]
+}
+
+Table activity_assignees {
+  activity_id uuid [not null]
+  person_id uuid [not null]
+  assigned_at timestamp [not null]
+
+  Indexes {
+    (activity_id, person_id) [unique]
+  }
+}
+
+Table activity_logs {
+  id bigserial [pk]
+  activity_id uuid [not null]
+  author_person_id uuid
+  message text [not null]
+  created_at timestamp [not null]
+}
+
+/*
+ Subdominio específico: materiales para actividades
+ Ejemplo: paellero, montaje, logística
+*/
+Table activity_materials {
+  id uuid [pk]
+  activity_id uuid [not null]
+  name text [not null]
+  quantity numeric
+  unit text
+  notes text
+}
+
+/* Relations */
 /* Inheritance / specialization */
 /* FK users.person_id → persons.id */
 /* Garantiza que todo usuario del sistema corresponde */
@@ -100,3 +150,12 @@ Ref: audit_log.user_id > users.person_id
 Ref: contributions.member_id > members.person_id
 Ref: contributions.project_id > projects.id
 Ref: contributions.type_id > contribution_types.id
+
+/* Projects activities */
+Ref: activities.project_id > projects.id
+Ref: activity_assignees.activity_id > activities.id
+Ref: activity_assignees.person_id > persons.id
+Ref: activity_logs.activity_id > activities.id
+Ref: activity_logs.author_person_id > persons.id
+Ref: activity_materials.activity_id > activities.id
+Ref: activities.status_id > activity_statuses.id

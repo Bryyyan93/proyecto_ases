@@ -147,7 +147,7 @@ def members_server(input, output, session):
         )
 
         df = pd.DataFrame(data)
-        print(df)
+
         if df.empty:
             return df
 
